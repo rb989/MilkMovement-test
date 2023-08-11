@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import Map, {Source, Layer} from 'react-map-gl';
 import type {CircleLayer} from 'react-map-gl';
-import type {FeatureCollection} from 'geojson';
 
 import constants from './utils/constants';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -12,7 +11,8 @@ const layerStyle: CircleLayer = {
   paint: {
     'circle-radius': 10,
     'circle-color': '#f82c1f'
-  }
+  },
+  source: ''
 };
 
 function App() {
@@ -22,8 +22,8 @@ function App() {
 
   const mapRef = useRef(null);
 
-  const geojson: FeatureCollection = useMemo(() => {
-    const features = coords.map((coord) => ({type: 'Feature', geometry: {type: 'Point', coordinates: coord}}));
+  const geojson = useMemo(() => {
+    const features = coords.map((coord) => ({type: 'Feature', geometry: {type: 'Point', coordinates: coord}, properties: null}));
     return {
       type: 'FeatureCollection',
       features: features
@@ -66,7 +66,8 @@ function App() {
         if (rightBottom[1] < item[1]) rightBottom[1] = item[1]
       });
 
-      mapRef.current?.fitBounds([leftTop, rightBottom]);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (mapRef.current! as any).fitBounds([leftTop, rightBottom]);
     }
   }, [coords])
 
